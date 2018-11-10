@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Same paths as in Dockerfile and all should be readable using the same gid:
 REPOSITORY_ROOTS='/opt/cvs /opt/svn'
@@ -60,10 +60,19 @@ if [ "$(echo $1 | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 		fi
 	fi
 
+	# Set timezone
+	if [ -n "$TZ" ]; then
+		if [ -f "/usr/share/zoneinfo/$TZ" ]; then
+			ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
+		else
+			echo "$0: Given timezone not supported: $TZ" >&2
+		fi
+	fi
+
 	if [ "$1" = 'shell' ]; then
 		# Enter the shell
 		echo 'Start supervisord with: /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf'
-		exec /bin/bash --rcfile <(echo 'alias ll="ls -al --color"')
+		exec /bin/sh
 	else
 		# Start nginx and viewvc
 		exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
