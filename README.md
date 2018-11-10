@@ -29,6 +29,7 @@ Usage examples
 Assuming that your cvs repository root directory on the host machine is `/var/lib/cvs`
 and has the privileges 750 (user may read+write, group can only read, and others are denied),
 and that you want viewvc be accessible on `127.0.0.1:8002`, then execute one of the commands below.
+The available internal repository volume mount pounts are `/opt/cvs` and `/opt/svn`.
 You may want to place your preferred command in an shell alias or script to not have to type it out each time.
 
 Minimal:
@@ -46,7 +47,7 @@ Using both CVS and SVN repositories:
 Recommended use (use the same time zone as the host):
 
 	docker run --name viewvc \
-	-v /var/lib/cvs:/repos:ro \
+	-v /var/lib/cvs:/opt/cvs:ro \
 	-p 127.0.0.1:8002:80 \
 	-e TZ=$(</etc/timezone) \
 	--rm -d cmanley/viewvc
@@ -54,7 +55,7 @@ Recommended use (use the same time zone as the host):
 Explicitly specify which group id to use for reading the repository, and the timezone:
 
 	docker run --name viewvc \
-	-v /var/lib/cvs:/repos:ro \
+	-v /var/lib/cvs:/opt/cvs:ro \
 	-p 127.0.0.1:8002:80/tcp \
 	-e VIEWVC_GID=$(stat -c%g /var/lib/cvs) \
 	-e TZ=$(</etc/timezone) \
@@ -63,7 +64,7 @@ Explicitly specify which group id to use for reading the repository, and the tim
 Start container and a shell session within it (this does not start nginx):
 
 	docker run --name viewvc \
-	-v /var/lib/cvs:/repos:ro \
+	-v /var/lib/cvs:/opt/cvs:ro \
 	-p 127.0.0.1:8002:80/tcp \
 	--rm -it cmanley/viewvc shell
 
