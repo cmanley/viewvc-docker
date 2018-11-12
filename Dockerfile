@@ -22,7 +22,9 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /opt/cvs /opt/svn \
 	&& chgrp www-data /opt/cvs /opt/svn \
 	&& ln -s /usr/share/viewvc/docroot/images/favicon.ico /usr/share/viewvc/favicon.ico \
-	&& mv /etc/viewvc/viewvc.conf /etc/viewvc/viewvc.conf.dist
+	&& mv /etc/viewvc/viewvc.conf /etc/viewvc/viewvc.conf.dist \
+	&& DEBIAN_VERSION=$(cat /etc/debian_version) \
+	&& sed -Ei 's/(<td>Powered by .+?<\/a>)/\1 in a Debian '$DEBIAN_VERSION' based Docker container/' /etc/viewvc/templates/include/footer.ezt
 
 
 COPY copy /
