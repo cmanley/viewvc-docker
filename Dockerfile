@@ -86,7 +86,9 @@ RUN printf "\n########## Installing viewvc ##########\n" \
 	&& mkdir -p /opt/cvs /opt/svn \
 	&& chgrp www-data /opt/cvs /opt/svn \
 	&& ln -s /usr/share/viewvc/docroot/images/favicon.ico /usr/share/viewvc/favicon.ico \
-	&& mv /etc/viewvc/viewvc.conf /etc/viewvc/viewvc.conf.dist
+	&& mv /etc/viewvc/viewvc.conf /etc/viewvc/viewvc.conf.dist \
+	&& ALPINE_VERSION=$(cat /etc/alpine-release) \
+	&& sed -Ei 's/(<td>Powered by .+?<\/a>)/\1 in an Alpine Linux '$ALPINE_VERSION' based Docker container/' /etc/viewvc/templates/include/footer.ezt
 
 
 COPY copy /
