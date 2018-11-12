@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
 	nginx-light \
 	python-chardet \
 	python-pygments \
+	python-subversion \
 	subversion \
 	supervisor \
 	viewvc \
