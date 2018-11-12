@@ -78,6 +78,6 @@ if [ "$(echo $1 | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 		exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
 	fi
 else
-	# All other entry points. Typically /bin/bash
+	# All other entry points. Typically /bin/sh
 	exec "$@"
 fi
