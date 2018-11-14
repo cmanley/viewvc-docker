@@ -84,6 +84,8 @@ Remove the container (in case you didn't run it with the --rm option) using:
 Runtime configuration
 ---------------------
 
+### Using environment variables ###
+
 You can configure how the container runs by passing some of the environment variables below using the --env or -e option to docker run.
 Unless your host's repository is world-readable (which it shouldn't be), then you'll need to at least need to specify VIEWVC_GID.
 
@@ -91,6 +93,24 @@ Unless your host's repository is world-readable (which it shouldn't be), then yo
 |-------------------|------------------------------------------------------------------------------------------------------------------|
 | **VIEWVC_GID**    | The gid (group id) of the host repository directory. If not given, then the gid of the host volume will be used. |
 | **TZ**            | Specify the time zone to use. Default is UTC. In most cases, use the value in the host's /etc/timezone file.     |
+
+### Using override config files ###
+
+Besides simply editing existing config files in the project and then rebuilding and running the project,
+you can also create custom config files on you host machine and mount them into the container at run time.
+
+#### Example: ####
+If you want to use your own viewvc.conf file that exists on the host machine in path `/path/to/viewvc.conf`, then
+simply mount it over the viewvc.conf file in the container (it's path is `/etc/viewvc/viewvc.conf`) at run time like this:
+```shell
+docker run --name viewvc \
+-v /path/to/viewvc.conf:/etc/viewvc/viewvc.conf:ro \
+-v /var/lib/cvs:/opt/cvs:ro \
+-v /var/lib/svn:/opt/svn:ro \
+-p 127.0.0.1:8002:80/tcp \
+--rm -d cmanley/viewvc:alpine
+```
+Tip: Leave the -d (= detach = run in background) option off the first time you run your new command just to see if your change causes any errors.
 
 Security information
 --------------------
