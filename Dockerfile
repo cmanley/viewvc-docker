@@ -30,7 +30,8 @@ RUN adduser -D -S -u 82 -h /var/www -G www-data www-data
 ARG CVSGRAPH_VERSION=1.7.0
 ARG CVSGRAPH_BASENAME=cvsgraph-$CVSGRAPH_VERSION
 ARG CVSGRAPH_DOWNLOAD_FILE=$CVSGRAPH_BASENAME.tar.gz
-ARG CVSGRAPH_DOWNLOAD_URL=http://www.akhphd.au.dk/~bertho/cvsgraph/release/$CVSGRAPH_DOWNLOAD_FILE
+#ARG CVSGRAPH_DOWNLOAD_URL=http://www.akhphd.au.dk/~bertho/cvsgraph/release/$CVSGRAPH_DOWNLOAD_FILE
+ARG CVSGRAPH_DOWNLOAD_URL=https://github.com/cmanley/viewvc-docker/raw/alpine/$CVSGRAPH_DOWNLOAD_FILE
 ARG CVSGRAPH_DOWNLOAD_SHA256=74438faaefd325c7a8ed289ea5d1657befe1d1859d55f8fbbcc7452f4efd435f
 RUN printf "\n########## Building cvsgraph ##########\n" \
 	&& cd /tmp \
