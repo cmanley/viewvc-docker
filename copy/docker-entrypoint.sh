@@ -5,6 +5,7 @@ REPOSITORY_ROOTS='/opt/cvs /opt/svn'
 REPOSITORY_ROOTS_MOUNTED=
 REPOSITORY_GID=
 
+
 # Get the mounted repository volumes and abort if they were not mounted read-only.
 for root in $REPOSITORY_ROOTS; do
 	#mount_opts=$(findmnt -no 'OPTIONS' "$root" 2>&1)	# part of util-linux package
@@ -26,7 +27,9 @@ for root in $REPOSITORY_ROOTS; do
 done
 
 # Default entrypoint (as defined by Dockerfile CMD):
-if [ "$(echo "$1" | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
+if [ "$1" = 'viewvc' ] || [ "$1" = 'shell' ]; then
+	VIEWVC_USER='www-data'
+	VIEWVC_GROUP='www-data'
 
 	# Set gid of viewvc so that it can read the host's volume
 	if [ -n "$REPOSITORY_ROOTS_MOUNTED" ]; then
@@ -39,7 +42,6 @@ if [ "$(echo "$1" | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 			echo "$0: Bad gid syntax in VIEWVC_GID environment variable ($VIEWVC_GID)" >&2
 			exit 1
 		fi
-		VIEWVC_GROUP=www-data
 		current_gid=$(getent group "$VIEWVC_GROUP" | cut -d: -f3)
 		if [ "$VIEWVC_GID" = "$current_gid" ]; then
 			echo "$0: ViewVC is already configured to use the gid $VIEWVC_GID($VIEWVC_GROUP)"
@@ -64,7 +66,7 @@ if [ "$(echo "$1" | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 	if [ -n "$VIEWVC_THEME" ]; then
 		templates_dir='/etc/viewvc/templates'
 		if [ "$VIEWVC_THEME" != "${VIEWVC_THEME//[^a-zA-Z0-9_]/}" ]; then
-			echo "Bad characters in theme name ($VIEWVC_THEME)!"
+			echo "$0: Bad characters in theme name ($VIEWVC_THEME)!"
 			exit 1
 		fi
 		if [ ! -d "$templates_dir/$VIEWVC_THEME" ]; then
@@ -74,7 +76,7 @@ if [ "$(echo "$1" | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 		symlink="$templates_dir/current"
 		current_theme=$(readlink -f "$symlink" | xargs basename)
 		if [ -z "$current_theme" ]; then
-			echo 'Failed to determine current theme!'
+			echo "$0: Failed to determine current theme!"
 			exit 1
 		fi
 		if [ "$VIEWVC_THEME" = "$current_theme" ]; then
@@ -87,11 +89,19 @@ if [ "$(echo "$1" | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 
 	if [ "$1" = 'shell' ]; then
 		# Enter the shell
-		echo 'Start supervisord with: /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf'
-		exec /bin/bash --rcfile <(echo 'alias ll="ls -al --color"')
+		exec /bin/bash --rcfile <(echo 'alias ll="ls -al --color"; export PS1='"'"'$(whoami)@viewvc:$(pwd)$'"'")
 	else
-		# Start nginx and viewvc
-		exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+		# Start viewvc standalone
+		if [ -z "$VIEWVC_PORT" ]; then
+			VIEWVC_PORT=8080
+		fi
+		#host=$( ip a show eth0 | grep inet | awk '{print $2}' | cut -d/ -f1 )
+		VIEWVC_HOST=$( ip -f inet addr show scope global | grep inet | head -n1 | awk '{print $2}' | cut -d/ -f1 )
+		if [ -z "$VIEWVC_HOST" ]; then
+			echo "$0: Failed to determine non-loopback IP address to listen on"
+			exit 1
+		fi
+		exec sudo -u"$VIEWVC_USER" -g"$VIEWVC_GROUP" /usr/lib/viewvc/bin/standalone.py --port "$VIEWVC_PORT" --host="$VIEWVC_HOST"
 	fi
 else
 	# All other entry points. Typically /bin/bash
