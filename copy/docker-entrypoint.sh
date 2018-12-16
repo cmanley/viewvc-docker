@@ -26,7 +26,7 @@ for root in $REPOSITORY_ROOTS; do
 done
 
 # Default entrypoint (as defined by Dockerfile CMD):
-if [ "$(echo $1 | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
+if [ "$1" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 
 	# Set gid of viewvc so that it can read the host's volume
 	if [ -n "$REPOSITORY_ROOTS_MOUNTED" ]; then

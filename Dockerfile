@@ -9,8 +9,8 @@ RUN apk update && apk --no-cache add \
 	nginx \
 	python3 \
 	py-subversion \
-	py3-chardet \
-	py3-pygments \
+	py-chardet \
+	py-pygments \
 	shadow \
 	spawn-fcgi \
 	subversion \
@@ -97,4 +97,4 @@ COPY copy /
 
 EXPOSE 80
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["viewvc:alpine"]
+CMD ["viewvc"]
