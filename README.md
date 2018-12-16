@@ -12,13 +12,13 @@ Installation
 ### Option 1: Download image from hub.docker.com ###
 You can simply pull this image from docker hub like this:
 
-	docker pull cmanley/viewvc:debian-master
+	docker pull cmanley/viewvc:debian-dev
 
 ### Option 2: Build the image yourself ###
 
 	git clone <Link from "Clone or download" button>
 	cd viewvc-docker
-	docker build --rm -t cmanley/viewvc:debian-master .
+	docker build --rm -t cmanley/viewvc:debian-dev .
 
 The docker build command must be run as root or as member of the docker group,
 or else you'll get the error "permission denied while trying to connect to the Docker daemon socket".
@@ -34,7 +34,7 @@ You may want to place your preferred command in an shell alias or script to not 
 
 Minimal:
 
-	docker run --name viewvc -v /var/lib/cvs:/opt/cvs:ro -p 127.0.0.1:8002:80/tcp --rm -d cmanley/viewvc:debian-master
+	docker run --name viewvc -v /var/lib/cvs:/opt/cvs:ro -p 127.0.0.1:8002:80/tcp --rm -d cmanley/viewvc:debian-dev
 
 Using both CVS and SVN repositories:
 
@@ -42,7 +42,7 @@ Using both CVS and SVN repositories:
 	-v /var/lib/cvs:/opt/cvs:ro \
 	-v /var/lib/svn:/opt/svn:ro \
 	-p 127.0.0.1:8002:80/tcp \
-	--rm -d cmanley/viewvc:debian-master
+	--rm -d cmanley/viewvc:debian-dev
 
 Recommended use (use the same time zone as the host):
 
@@ -50,7 +50,7 @@ Recommended use (use the same time zone as the host):
 	-v /var/lib/cvs:/opt/cvs:ro \
 	-p 127.0.0.1:8002:80 \
 	-e TZ=$(</etc/timezone) \
-	--rm -d cmanley/viewvc:debian-master
+	--rm -d cmanley/viewvc:debian-dev
 
 Explicitly specify which group id to use for reading the repository, and the timezone:
 
@@ -59,14 +59,14 @@ Explicitly specify which group id to use for reading the repository, and the tim
 	-p 127.0.0.1:8002:80/tcp \
 	-e VIEWVC_GID=$(stat -c%g /var/lib/cvs) \
 	-e TZ=$(</etc/timezone) \
-	--rm -d cmanley/viewvc:debian-master
+	--rm -d cmanley/viewvc:debian-dev
 
 Start container and a shell session within it (this does not start nginx):
 
 	docker run --name viewvc \
 	-v /var/lib/cvs:/opt/cvs:ro \
 	-p 127.0.0.1:8002:80/tcp \
-	--rm -it cmanley/viewvc:debian-master shell
+	--rm -it cmanley/viewvc:debian-dev shell
 
 In case of problems, start the container without the --rm option, check your docker logs, and check that the container is running:
 
@@ -110,7 +110,7 @@ docker run --name viewvc \
 -v /var/lib/cvs:/opt/cvs:ro \
 -v /var/lib/svn:/opt/svn:ro \
 -p 127.0.0.1:8002:80/tcp \
---rm -d cmanley/viewvc:debian-master
+--rm -d cmanley/viewvc:debian-dev
 ```
 Tip: Leave the -d (= detach = run in background) option off the first time you run your new command just to see if your change causes any errors.
 
