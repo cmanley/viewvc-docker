@@ -26,7 +26,7 @@ for root in $REPOSITORY_ROOTS; do
 done
 
 # Default entrypoint (as defined by Dockerfile CMD):
-if [ "$(echo $1 | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
+if [ "$1" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 
 	# Set gid of viewvc so that it can read the host's volume
 	if [ -n "$REPOSITORY_ROOTS_MOUNTED" ]; then
@@ -66,6 +66,31 @@ if [ "$(echo $1 | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 			ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 		else
 			echo "$0: Given timezone not supported: $TZ" >&2
+		fi
+	fi
+
+	# Optionally set viewvc theme (template dir)
+	if [ -n "$VIEWVC_THEME" ]; then
+		templates_dir='/etc/viewvc/templates'
+		if [ "$VIEWVC_THEME" != "${VIEWVC_THEME//[^a-zA-Z0-9_]/}" ]; then
+			echo "Bad characters in theme name ($VIEWVC_THEME)!"
+			exit 1
+		fi
+		if [ ! -d "$templates_dir/$VIEWVC_THEME" ]; then
+			echo "$0: viewvc theme \"$VIEWVC_THEME\" does not exist"
+			exit 1
+		fi
+		symlink="$templates_dir/current"
+		current_theme=$(readlink -f "$symlink" | xargs basename)
+		if [ -z "$current_theme" ]; then
+			echo 'Failed to determine current theme!'
+			exit 1
+		fi
+		if [ "$VIEWVC_THEME" = "$current_theme" ]; then
+			echo "$0: viewvc theme is already \"$VIEWVC_THEME\""
+		else
+			rm "$symlink" && ln -s "$templates_dir/$VIEWVC_THEME" "$symlink"
+			echo "$0: viewvc theme changed to \"$VIEWVC_THEME\""
 		fi
 	fi
 
