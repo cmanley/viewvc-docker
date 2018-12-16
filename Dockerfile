@@ -1,7 +1,7 @@
 FROM debian:stretch-slim
 
 LABEL Maintainer="Craig Manley https://github.com/cmanley" \
-      Description="ViewVC 1.1.26-1 (CVS & SVN repository viewer) based on nginx and Debian stretch-slim"
+      Description="ViewVC master (CVS & SVN repository viewer) based on nginx and Debian stretch-slim"
 
 RUN apt-get update && apt-get install -y \
 	cvs \
