@@ -31,7 +31,7 @@ and has the privileges 750 (user may read+write, group can only read, and others
 and that you want viewvc be accessible on `127.0.0.1:8002`, then execute one of the commands below.
 The available internal repository volume mount pounts are `/opt/cvs` and `/opt/svn`.
 You may want to place your preferred command in an shell alias or script to not have to type it out each time.
-The viewvc standalone daemon listens on port 8080 by default.
+The viewvc standalone daemon listens on the internal port 8080 by default.
 
 Minimal:
 
