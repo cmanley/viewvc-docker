@@ -52,12 +52,13 @@ Recommended use (use the same time zone as the host):
 	-e TZ=$(</etc/timezone) \
 	--rm -d cmanley/viewvc:debian-dev
 
-Explicitly specify which group id to use for reading the repository, and the timezone:
+Explicitly specify which group id to use for reading the repository, the classic theme, and the timezone:
 
 	docker run --name viewvc \
 	-v /var/lib/cvs:/opt/cvs:ro \
 	-p 127.0.0.1:8002:80/tcp \
 	-e VIEWVC_GID=$(stat -c%g /var/lib/cvs) \
+	-e VIEWVC_THEME=classic \
 	-e TZ=$(</etc/timezone) \
 	--rm -d cmanley/viewvc:debian-dev
 
