@@ -103,8 +103,8 @@ RUN printf "\n########## Installing viewvc ##########\n" \
 	&& sed -Ei 's/(Powered by .+?<\/a>)/\1 in an Alpine '$(cat /etc/alpine-release)' based Docker container/' /etc/viewvc/templates/*/include/footer.ezt \
 	&& $( cd /etc/viewvc/templates && ln -s default current ) \
 	\
-	#&& mkdir -p /usr/share/viewvc/ \
-	#&& ln -s /etc/viewvc/templates/default/docroot /usr/share/viewvc/ \
+	&& mkdir -p /usr/share/viewvc/ \
+	&& ln -s /etc/viewvc/templates/current/docroot /usr/share/viewvc/ \
 	\
 	&& rm -fr viewvc-master "$VIEWVC_DOWNLOAD_FILE" \
 	&& if [ -n "$DEL" ]; then echo "Delete temporary package(s) $DEL" && apk del $DEL; fi
