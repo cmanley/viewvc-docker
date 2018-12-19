@@ -32,4 +32,4 @@ COPY copy /
 
 EXPOSE 80
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["viewvc:debian"]
+CMD ["viewvc"]

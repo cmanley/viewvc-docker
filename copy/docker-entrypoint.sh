@@ -26,7 +26,7 @@ for root in $REPOSITORY_ROOTS; do
 done
 
 # Default entrypoint (as defined by Dockerfile CMD):
-if [ "$(echo $1 | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
+if [ "$1" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 
 	# Set gid of viewvc so that it can read the host's volume
 	if [ -n "$REPOSITORY_ROOTS_MOUNTED" ]; then
@@ -63,7 +63,7 @@ if [ "$(echo $1 | cut -c1-6)" = 'viewvc' ] || [ "$1" = 'shell' ]; then
 	if [ "$1" = 'shell' ]; then
 		# Enter the shell
 		echo 'Start supervisord with: /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf'
-		exec /bin/bash --rcfile <(echo 'alias ll="ls -al --color"')
+		exec /bin/bash --rcfile <(echo 'alias ll="ls -al --color"; export PS1='"'"'$(whoami)@viewvc:$(pwd)$ '"'")
 	else
 		# Start nginx and viewvc
 		exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
