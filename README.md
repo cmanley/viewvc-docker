@@ -2,7 +2,7 @@ viewvc-docker
 =============
 
 A Docker image of ViewVC 1.1.26-1 ( a CVS and SVN repository viewer from http://www.viewvc.org )
-based on nginx and Debian Stretch-slim, with configurable run-time options (timezone and group id).
+based on nginx and Debian Stretch-slim, with configurable run-time options (theme, timezone, and group id).
 
 You can use it to quickly and safely expose a web interface to the repositories directory on your host machine.
 
@@ -52,12 +52,13 @@ Recommended use (use the same time zone as the host):
 	-e TZ=$(</etc/timezone) \
 	--rm -d cmanley/viewvc
 
-Explicitly specify which group id to use for reading the repository, and the timezone:
+Explicitly specify which group id to use for reading the repository, the classic theme, and the timezone:
 
 	docker run --name viewvc \
 	-v /var/lib/cvs:/opt/cvs:ro \
 	-p 127.0.0.1:8002:80/tcp \
 	-e VIEWVC_GID=$(stat -c%g /var/lib/cvs) \
+	-e VIEWVC_THEME=classic \
 	-e TZ=$(</etc/timezone) \
 	--rm -d cmanley/viewvc
 
@@ -89,14 +90,15 @@ Runtime configuration
 You can configure how the container runs by passing some of the environment variables below using the --env or -e option to docker run.
 Unless your host's repository is world-readable (which it shouldn't be), then you'll need to at least need to specify VIEWVC_GID.
 
-| name              | description                                                                                                      |
-|-------------------|------------------------------------------------------------------------------------------------------------------|
-| **VIEWVC_GID**    | The gid (group id) of the host repository directory. If not given, then the gid of the host volume will be used. |
-| **TZ**            | Specify the time zone to use. Default is UTC. In most cases, use the value in the host's /etc/timezone file.     |
+| name             | description                                                                                                      |
+|------------------|------------------------------------------------------------------------------------------------------------------|
+| **VIEWVC_GID**   | The gid (group id) of the host repository directory. If not given, then the gid of the host volume will be used. |
+| **VIEWVC_THEME** | Either "default" or "classic".                                                                                   |
+| **TZ**           | Specify the time zone to use. Default is UTC. In most cases, use the value in the host's /etc/timezone file.     |
 
 ### Using override config files ###
 
-Besides simply editing existing config files in the project and then rebuilding and running the project, 
+Besides simply editing existing config files in the project and then rebuilding and running the project,
 you can also create custom config files on you host machine and mount them into the container at run time.
 
 #### Example: ####
